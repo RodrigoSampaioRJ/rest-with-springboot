@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import com.rodrigo.dto.PersonDto;
+import com.rodrigo.dto.PersonFormDto;
 import com.rodrigo.model.Person;
 import com.rodrigo.service.PersonService;
 
@@ -24,9 +24,9 @@ public class PersonController {
 	private PersonService personService;
 	
 	@PostMapping
-	public ResponseEntity<Person> create(@RequestBody @Valid PersonDto personDto, UriComponentsBuilder uriBuilder){
+	public ResponseEntity<Person> create(@RequestBody @Valid PersonFormDto personFormDto, UriComponentsBuilder uriBuilder){
 		
-		Person person = personService.create(personDto);
+		Person person = personService.create(personFormDto);
 		
 		URI uri = uriBuilder.path("person/{id}").buildAndExpand(person.getId()).toUri();
 		

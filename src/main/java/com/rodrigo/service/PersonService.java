@@ -6,7 +6,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.rodrigo.dto.PersonDto;
+import com.rodrigo.dto.PersonFormDto;
 import com.rodrigo.infra.ResourceNotFoundException;
 import com.rodrigo.model.Person;
 import com.rodrigo.repository.PersonRepository;
@@ -34,9 +34,9 @@ public class PersonService {
 	}
 	
 	
-	public Person create(PersonDto personDto) {
+	public Person create(PersonFormDto personFormDto) {
 		
-		Person person = mapper.map(personDto, Person.class);
+		Person person = mapper.map(personFormDto, Person.class);
 		
 		return personRepository.save(person);
 	}
