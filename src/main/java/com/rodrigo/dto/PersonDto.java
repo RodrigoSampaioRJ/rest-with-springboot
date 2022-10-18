@@ -1,8 +1,7 @@
 package com.rodrigo.dto;
 
 public class PersonDto {
-	
-	private Long id;
+
 	
 	private String name;
 	
@@ -11,21 +10,15 @@ public class PersonDto {
 	private String gender;
 	
 	private String address;
+	
+	public PersonDto() {
+	}
 
-	public PersonDto(Long id, String name, String lastName, String gender, String address) {
-		this.id = id;
+	public PersonDto(String name, String lastName, String gender, String address) {
 		this.name = name;
 		this.lastName = lastName;
 		this.gender = gender;
 		this.address = address;
-	}
-
-	public Long getId() {
-		return id;
-	}
-	
-	public void setId(Long id) {
-		this.id = id;
 	}
 
 	public String getName() {

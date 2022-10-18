@@ -1,11 +1,13 @@
 package com.rodrigo.service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.rodrigo.dto.PersonDto;
 import com.rodrigo.dto.PersonFormDto;
 import com.rodrigo.infra.ResourceNotFoundException;
 import com.rodrigo.model.Person;
@@ -22,17 +24,22 @@ public class PersonService {
 	private ModelMapper mapper;
 	
 	
-	public List<Person> findAll(){
+	public List<PersonDto> findAll(){
 		
-		return personRepository.findAll();
+		return personRepository.findAll()
+				.stream().map(p -> mapper.map(p, PersonDto.class))
+				.collect(Collectors.toList());
 	}
 	
 	
-	public Person findById(Long id) {
+	public PersonDto findById(Long id) {
 		
-		return personRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("No user found with this id!"));
+		Person person = personRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("No user found with this id!"));
+		
+		PersonDto personDto = mapper.map(person, PersonDto.class);
+		
+		return personDto;
 	}
-	
 	
 	public Person create(PersonFormDto personFormDto) {
 		
@@ -41,12 +48,21 @@ public class PersonService {
 		return personRepository.save(person);
 	}
 	
-	public Person update(Person person) {
+	public Person update(Person personUpdated) {
 		
-		var entity = personRepository.findById(person.getId())
+		personRepository.findById(personUpdated.getId())
 				.orElseThrow(() -> new ResourceNotFoundException("No user found with this id!"));
 		
-		return personRepository.save(entity);
+		return personRepository.save(personUpdated);
+		
+	}
+	
+	public void delete(Long id) {
+		
+		Person person = personRepository.findById(id)
+		.orElseThrow(() -> new ResourceNotFoundException("No user found with this id!"));
+		
+		personRepository.delete(person);
 		
 	}
 	
