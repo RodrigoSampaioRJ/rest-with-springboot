@@ -19,6 +19,7 @@ import com.rodrigo.dto.PersonDto;
 import com.rodrigo.dto.PersonFormDto;
 import com.rodrigo.model.Person;
 import com.rodrigo.service.PersonService;
+import com.rodrigo.util.MediaType;
 
 import jakarta.validation.Valid;
 
@@ -39,13 +40,13 @@ public class PersonController {
 		return ResponseEntity.created(uri).body(person);
 	}
 	
-	@GetMapping
+	@GetMapping(produces = {MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON, MediaType.APPLICATION_YAML})
 	public List<PersonDto> findAll(){
 		
 		return personService.findAll();
 	}
 	
-	@GetMapping("/{id}")
+	@GetMapping(value = "/{id}", produces = {MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON, MediaType.APPLICATION_YAML})
 	public ResponseEntity<PersonDto> findById(@PathVariable Long id){
 
 		return ResponseEntity.ok().body(personService.findById(id));
