@@ -8,6 +8,7 @@ public class RestWithSpringbootApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(RestWithSpringbootApplication.class, args);
+
 	}
 
 }

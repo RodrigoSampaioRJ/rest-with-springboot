@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import com.rodrigo.dto.PersonDto;
-import com.rodrigo.dto.PersonFormDto;
 import com.rodrigo.model.Person;
 import com.rodrigo.service.PersonService;
 import com.rodrigo.util.MediaType;
@@ -31,13 +30,13 @@ public class PersonController {
 	private PersonService personService;
 	
 	@PostMapping
-	public ResponseEntity<Person> create(@RequestBody @Valid PersonFormDto personFormDto, UriComponentsBuilder uriBuilder){
+	public ResponseEntity<PersonDto> create(@RequestBody @Valid PersonDto personDto, UriComponentsBuilder uriBuilder){
 		
-		Person person = personService.create(personFormDto);
+		PersonDto personDtoCreated = personService.create(personDto);
 		
-		URI uri = uriBuilder.path("person/{id}").buildAndExpand(person.getId()).toUri();
+		URI uri = uriBuilder.path("person/{id}").buildAndExpand(personDtoCreated.getKey()).toUri();
 		
-		return ResponseEntity.created(uri).body(person);
+		return ResponseEntity.created(uri).body(personDtoCreated);
 	}
 	
 	@GetMapping(produces = {MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON, MediaType.APPLICATION_YAML})

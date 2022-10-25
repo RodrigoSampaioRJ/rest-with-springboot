@@ -1,7 +1,15 @@
 package com.rodrigo.dto;
 
-public class PersonDto {
+import org.springframework.hateoas.RepresentationModel;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+
+@JsonPropertyOrder({"id", "name", "lastName", "address", "gender"})
+public class PersonDto extends RepresentationModel<PersonDto>{
+
+	@JsonProperty("id")
+	private Long key;
 	
 	private String name;
 	
@@ -14,11 +22,20 @@ public class PersonDto {
 	public PersonDto() {
 	}
 
-	public PersonDto(String name, String lastName, String gender, String address) {
+	public PersonDto(Long key, String name, String lastName, String gender, String address) {
+		this.key = key;
 		this.name = name;
 		this.lastName = lastName;
 		this.gender = gender;
 		this.address = address;
+	}
+
+	public Long getKey() {
+		return key;
+	}
+
+	public void setKey(Long key) {
+		this.key = key;
 	}
 
 	public String getName() {
@@ -52,5 +69,8 @@ public class PersonDto {
 	public void setAddress(String address) {
 		this.address = address;
 	}
+
+	
+	
 
 }
