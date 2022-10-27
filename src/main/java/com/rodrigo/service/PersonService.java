@@ -4,37 +4,41 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.stereotype.Service;
 
 import com.rodrigo.controller.PersonController;
 import com.rodrigo.dto.PersonDto;
-import com.rodrigo.infra.ResourceNotFoundException;
+import com.rodrigo.infra.exceptions.RequiredObjectIsNullException;
+import com.rodrigo.infra.exceptions.ResourceNotFoundException;
 import com.rodrigo.model.Person;
 import com.rodrigo.repository.PersonRepository;
+import com.rodrigo.util.ObjectMapperUtils;
 
 @Service
 public class PersonService {
 
 	@Autowired
 	private PersonRepository personRepository;
-
+	
 	@Autowired
-	private ModelMapper mapper;
+	ObjectMapperUtils omu;
 
 	public List<PersonDto> findAll() {
 		
-		var listDto = personRepository.findAll().stream().map(p -> mapper.map(p, PersonDto.class))
-				.collect(Collectors.toList());
+		List<Person> peopleList = personRepository.findAll();
 		
-		listDto
+		List<PersonDto> peopleListDto = null;
+		
+		peopleListDto = omu.mapAll(peopleList, PersonDto.class);
+		
+		peopleListDto
 			.stream()
 			.forEach(p -> p.add(linkTo(methodOn(PersonController.class).findById(p.getKey())).withSelfRel()));
 
-		return listDto;
+		return peopleListDto;
 	}
 
 	public PersonDto findById(Long id) {
@@ -42,7 +46,7 @@ public class PersonService {
 		Person person = personRepository.findById(id)
 				.orElseThrow(() -> new ResourceNotFoundException("No user found with this id!"));
 
-		PersonDto personDto = mapper.map(person, PersonDto.class);
+		PersonDto personDto = omu.map(person, PersonDto.class);
 		
 		personDto.add(linkTo(methodOn(PersonController.class).findById(id)).withSelfRel());
 
@@ -50,24 +54,36 @@ public class PersonService {
 	}
 
 	public PersonDto create(PersonDto personDto) {
+		
+		if (personDto == null) {
+			throw new RequiredObjectIsNullException();
+		}
 
-		Person person = mapper.map(personDto, Person.class);		
+		Person person = omu.map(personDto, Person.class);		
 
-		PersonDto personDtoCreated = mapper.map(personRepository.save(person), PersonDto.class);
+		PersonDto personDtoCreated = omu.map(personRepository.save(person), PersonDto.class);
 		
 		personDtoCreated.add(linkTo(methodOn(PersonController.class).findById(personDtoCreated.getKey())).withSelfRel());
 
 		return personDtoCreated;
 	}
 
-	public PersonDto update(Person personUpdated) {
+	public PersonDto update(PersonDto personDtoUpdated) {
 
-		Person person = personRepository.findById(personUpdated.getId())
-				.orElseThrow(() -> new ResourceNotFoundException("No user found with this id!"));
+		Person person;
+		try {
+			person = personRepository.findById(personDtoUpdated.getKey())
+					.orElseThrow(() -> new ResourceNotFoundException("No user found with this id!"));
+		} catch (InvalidDataAccessApiUsageException e) {
+			throw new RequiredObjectIsNullException();
+		}
 		
-		personRepository.save(personUpdated);
-		
-		PersonDto personDto = mapper.map(person, PersonDto.class);
+		person.setAddress(personDtoUpdated.getAddress());
+		person.setGender(personDtoUpdated.getGender());
+		person.setLastName(personDtoUpdated.getLastName());
+		person.setName(personDtoUpdated.getName());;
+
+		PersonDto personDto = omu.map(personRepository.save(person), PersonDto.class);
 		
 		personDto.add(linkTo(methodOn(PersonController.class).findById(personDto.getKey())).withSelfRel());
 

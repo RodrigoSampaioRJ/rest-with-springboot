@@ -1,5 +1,7 @@
 package com.rodrigo.dto;
 
+import java.util.Objects;
+
 import org.springframework.hateoas.RepresentationModel;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -70,7 +72,27 @@ public class PersonDto extends RepresentationModel<PersonDto>{
 		this.address = address;
 	}
 
-	
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + Objects.hash(key);
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!super.equals(obj))
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		PersonDto other = (PersonDto) obj;
+		return Objects.equals(key, other.key);
+	}
+
+
 	
 
 }

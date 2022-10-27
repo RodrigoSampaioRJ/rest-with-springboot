@@ -20,8 +20,6 @@ import com.rodrigo.model.Person;
 import com.rodrigo.service.PersonService;
 import com.rodrigo.util.MediaType;
 
-import jakarta.validation.Valid;
-
 @RestController
 @RequestMapping("/person")
 public class PersonController {
@@ -30,7 +28,7 @@ public class PersonController {
 	private PersonService personService;
 	
 	@PostMapping
-	public ResponseEntity<PersonDto> create(@RequestBody @Valid PersonDto personDto, UriComponentsBuilder uriBuilder){
+	public ResponseEntity<PersonDto> create(@RequestBody PersonDto personDto, UriComponentsBuilder uriBuilder){
 		
 		PersonDto personDtoCreated = personService.create(personDto);
 		
@@ -53,11 +51,11 @@ public class PersonController {
 	}
 	
 	@PutMapping
-	public ResponseEntity<Person> update(@RequestBody @Valid Person personUpdated){
+	public ResponseEntity<PersonDto> update(@RequestBody PersonDto personDto){
 		
-		personService.update(personUpdated);
+		PersonDto personDtoResponse = personService.update(personDto);
 		
-		return ResponseEntity.noContent().build();
+		return ResponseEntity.ok().body(personDtoResponse);
 	}
 	
 	@DeleteMapping("/{id}")

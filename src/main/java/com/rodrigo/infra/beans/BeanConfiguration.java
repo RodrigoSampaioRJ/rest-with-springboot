@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Configuration;
 
 import com.rodrigo.dto.PersonDto;
 import com.rodrigo.model.Person;
+import com.rodrigo.util.ObjectMapperUtils;
 
 @Configuration
 public class BeanConfiguration {
@@ -24,6 +25,11 @@ public class BeanConfiguration {
 		});
 		return mapper;
 		
+	}
+	
+	@Bean
+	public ObjectMapperUtils getObjectMapper() {
+		return new ObjectMapperUtils();
 	}
 
 

@@ -2,10 +2,11 @@ package com.rodrigo.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.when;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -19,12 +20,13 @@ import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
-import org.modelmapper.ModelMapper;
 
 import com.rodrigo.dto.PersonDto;
+import com.rodrigo.infra.exceptions.RequiredObjectIsNullException;
 import com.rodrigo.mocks.MockPerson;
 import com.rodrigo.model.Person;
 import com.rodrigo.repository.PersonRepository;
+import com.rodrigo.util.ObjectMapperUtils;
 
 @TestInstance(Lifecycle.PER_CLASS)
 @ExtendWith(MockitoExtension.class)
@@ -41,7 +43,7 @@ class PersonServiceTest {
 	PersonRepository repository;
 	
 	@Mock
-	ModelMapper mapper;
+	ObjectMapperUtils omu;
 
 	@BeforeEach
 	void setUp() throws Exception {
@@ -54,7 +56,32 @@ class PersonServiceTest {
 
 	@Test
 	void testFindAll() {
-		fail("Not yet implemented");
+		List<Person> peopleList = input.mockEntityList();
+		List<PersonDto> peopleListDto = input.mockDtoList();
+		
+		when(repository.findAll()).thenReturn(peopleList);
+		when(omu.mapAll(peopleList, PersonDto.class)).thenReturn(peopleListDto);
+		
+		System.out.println(peopleListDto.size());
+
+		var result = service.findAll();
+		
+		assertNotNull(result);
+		assertEquals(14, result.size());
+		
+		var resultOne = result.get(1);
+		
+		assertNotNull(resultOne);
+		assertNotNull(resultOne.getKey());
+		assertNotNull(resultOne.getLinks());
+		assertTrue(resultOne.toString().contains("links: [</person/1>;rel=\"self\"]"));
+		assertEquals("Address Test1", resultOne.getAddress());
+		assertEquals("First Name Test1", resultOne.getName());
+		assertEquals("Last Name Test1", resultOne.getLastName());
+		assertEquals("Female", resultOne.getGender());
+		
+		
+
 	}
 
 	@Test
@@ -65,7 +92,7 @@ class PersonServiceTest {
 		personDto.setKey(1l);
 		
 		when(repository.findById(1l)).thenReturn(Optional.of(person));
-		when(mapper.map(person, PersonDto.class)).thenReturn(personDto);
+		when(omu.map(person, PersonDto.class)).thenReturn(personDto);
 		
 		var result = service.findById(1l);
 		
@@ -93,9 +120,9 @@ class PersonServiceTest {
 		PersonDto personDtoCreated = input.mockDto(1);
 		personDtoCreated.setKey(1l);
 		
-		when(mapper.map(personDto, Person.class)).thenReturn(person);
+		when(omu.map(personDto, Person.class)).thenReturn(person);
 		when(repository.save(person)).thenReturn(personCreated);
-		when(mapper.map(personCreated, PersonDto.class)).thenReturn(personDtoCreated);
+		when(omu.map(personCreated, PersonDto.class)).thenReturn(personDtoCreated);
 
 		
 		var result = service.create(personDtoCreated);
@@ -109,7 +136,20 @@ class PersonServiceTest {
 		assertEquals("Last Name Test1", result.getLastName());
 		assertEquals("Female", result.getGender());
 	}
+	
+	@Test
+	void testCreateWithNullObject() {
+		
+		Exception exception = assertThrows(RequiredObjectIsNullException.class, () -> {
+			service.create(null);
+		});
 
+		String expectedMessage = "It is not allowed to persist a null objetct!";
+		String actualMessage = exception.getMessage();
+		
+		assertTrue(actualMessage.contains(expectedMessage));
+	}
+	
 	@Test
 	void testUpdate() {
 		Person person = input.mockEntity(1);
@@ -124,12 +164,12 @@ class PersonServiceTest {
 		PersonDto personDtoCreated = input.mockDto(1);
 		
 		when(repository.findById(1l)).thenReturn(Optional.of(person));
-		when(mapper.map(personDto, Person.class)).thenReturn(person);
+		when(omu.map(personDto, Person.class)).thenReturn(person);
 		when(repository.save(person)).thenReturn(personCreated);
-		when(mapper.map(personCreated, PersonDto.class)).thenReturn(personDtoCreated);
+		when(omu.map(personCreated, PersonDto.class)).thenReturn(personDtoCreated);
 
 		
-		var result = service.update(personCreated);
+		var result = service.update(personDto);
 		
 		assertNotNull(result);
 		assertNotNull(result.getKey());

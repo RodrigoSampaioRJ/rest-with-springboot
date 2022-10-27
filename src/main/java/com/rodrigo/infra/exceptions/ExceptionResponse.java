@@ -1,4 +1,4 @@
-package com.rodrigo.infra;
+package com.rodrigo.infra.exceptions;
 
 import java.io.Serializable;
 import java.util.Date;

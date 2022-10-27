@@ -1,4 +1,4 @@
-package com.rodrigo.infra;
+package com.rodrigo.infra.exceptions;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
