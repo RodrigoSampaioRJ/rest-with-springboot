@@ -36,7 +36,9 @@ public class PersonService {
 		
 		peopleListDto
 			.stream()
-			.forEach(p -> p.add(linkTo(methodOn(PersonController.class).findById(p.getKey())).withSelfRel()));
+			.forEach(p -> p.add(linkTo(methodOn(PersonController.class)
+					.findById(p.getKey()))
+					.withSelfRel()));
 
 		return peopleListDto;
 	}
@@ -48,7 +50,9 @@ public class PersonService {
 
 		PersonDto personDto = omu.map(person, PersonDto.class);
 		
-		personDto.add(linkTo(methodOn(PersonController.class).findById(id)).withSelfRel());
+		personDto.add(linkTo(methodOn(PersonController.class)
+				.findById(personDto.getKey()))
+				.withSelfRel());
 
 		return personDto;
 	}
