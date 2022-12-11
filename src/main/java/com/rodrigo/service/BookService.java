@@ -6,6 +6,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.stereotype.Service;
 
 import com.rodrigo.controller.BookController;
@@ -73,4 +74,35 @@ public class BookService {
 		return bookDtoCreated;
 	}
 
+	public BookDto update(BookDto bookDtoUpdated) {
+
+		Book book;
+		try {
+			book = bookRepository.findById(bookDtoUpdated.getKey())
+					.orElseThrow(() -> new ResourceNotFoundException("No book found with this id!"));
+		} catch (InvalidDataAccessApiUsageException e) {
+			throw new RequiredObjectIsNullException();
+		}
+		
+		book.setAuthor(bookDtoUpdated.getAuthor());
+		book.setLaunchDate(bookDtoUpdated.getLaunchDate());
+		book.setTitle(bookDtoUpdated.getTitle());
+		book.setPrice(bookDtoUpdated.getPrice());;
+
+		BookDto bookDto = omu.map(bookRepository.save(book), BookDto.class);
+		
+		bookDto.add(linkTo(methodOn(BookController.class).findById(bookDto.getKey())).withSelfRel());
+
+		return bookDto;
+
+	}
+
+	public void delete(Long id) {
+
+		Book book = bookRepository.findById(id)
+				.orElseThrow(() -> new ResourceNotFoundException("No book found with this id!"));
+
+		bookRepository.delete(book);
+
+	}
 }

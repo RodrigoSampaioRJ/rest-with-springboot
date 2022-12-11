@@ -5,9 +5,11 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -48,5 +50,19 @@ public class BookController {
 		
 	}
 	
+	@PutMapping
+	public ResponseEntity<BookDto> update(@RequestBody BookDto bookDtoUpdated){
+		
+		BookDto bookDto = bookService.update(bookDtoUpdated);
+		
+		return ResponseEntity.ok().body(bookDto);
+	}
 
+	@DeleteMapping("/{id}")
+	public ResponseEntity<BookDto> delete(@PathVariable Long id ){
+		
+		bookService.delete(id);
+		
+		return ResponseEntity.noContent().build();
+	}
 }
