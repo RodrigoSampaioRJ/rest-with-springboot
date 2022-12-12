@@ -14,6 +14,7 @@
 	<description>Udemy course project</description>
 	<properties>
 		<java.version>18</java.version>
+		<springdoc.version>2.0.0</springdoc.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -73,6 +74,11 @@
 		<dependency>
 			<groupId>com.fasterxml.jackson.dataformat</groupId>
 			<artifactId>jackson-dataformat-yaml</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springdoc</groupId>
+			<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+			<version>${springdoc.version}</version>
 		</dependency>
 	</dependencies>
 
