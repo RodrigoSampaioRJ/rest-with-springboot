@@ -38,7 +38,7 @@ public class MockBook {
 		Book book = new Book();
 		book.setAuthor("Author Test" + number);
 		book.setTitle("Title Test" + number);
-		book.setLaunchDate(new Date());
+		book.setLaunchDate(new Date(number));
 		book.setId(number.longValue());
 		book.setPrice(new BigDecimal(number));
 		return book;
@@ -48,7 +48,7 @@ public class MockBook {
 		BookDto bookDto = new BookDto();
 		bookDto.setAuthor("Author Test" + number);
 		bookDto.setTitle("Title Test" + number);
-		bookDto.setLaunchDate(new Date());
+		bookDto.setLaunchDate(new Date(number));
 		bookDto.setKey(number.longValue());
 		bookDto.setPrice(new BigDecimal(number));
 		return bookDto;

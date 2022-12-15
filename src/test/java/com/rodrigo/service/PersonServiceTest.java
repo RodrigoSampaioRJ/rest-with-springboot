@@ -62,7 +62,7 @@ class PersonServiceTest {
 		when(repository.findAll()).thenReturn(peopleList);
 		when(omu.mapAll(peopleList, PersonDto.class)).thenReturn(peopleListDto);
 		
-		System.out.println(peopleListDto.size());
+		//System.out.println(peopleListDto.size());
 
 		var result = service.findAll();
 		
